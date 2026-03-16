@@ -2,7 +2,7 @@
 from fastapi.params import Depends
 
 from db.session import get_db
-from services import CitaService
+from services.CitaService import CitatService
 from services.repositories.CitaRepository import CitaRepository
 from services.repositories.RegistroRepository import RegistroRepository
 
@@ -13,4 +13,4 @@ def getRegistroRepository(db = Depends(get_db))-> RegistroRepository:
     return RegistroRepository(db)
 #Services
 def getCitaService(citaRepository = Depends(getCitaRepository), registroRepository = Depends(getRegistroRepository)):
-    return CitaService(citaRepository, registroRepository)
+    return CitatService(citaRepository, registroRepository)

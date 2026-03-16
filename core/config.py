@@ -1,4 +1,4 @@
-from pydantic_settings import BaseSettings, SettingsConfigDict
+from pydantic_settings import BaseSettings
 
 
 class Settings(BaseSettings):
@@ -14,6 +14,6 @@ class Settings(BaseSettings):
     JWT_ALGORITHM: str
 
     class Config:
-        env_file = ".env"
+        env_file = "develop.env"
 
 settings = Settings()

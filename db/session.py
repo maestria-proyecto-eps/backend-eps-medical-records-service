@@ -12,10 +12,8 @@ DATABASE_URL = f"postgresql+psycopg2://{USER}:{PASSWORD}@{HOST}:{PORT}/{DBNAME}?
 
 # Crear engine (sincrónico)
 engine = create_engine(
-    settings.DB_URL,
-    pool_pre_ping=True,
-    pool_size=10,
-    max_overflow=20,
+    DATABASE_URL,
+    poolclass=NullPool
 )
 
 SessionLocal = sessionmaker(
