@@ -1,10 +1,11 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from core.logger import setup_logging, get_logger
+from routers import AppoinmentRouter
 
 app = FastAPI(
-    title="EPS API 2",
-    description="EPS management API 2",
+    title="EPS API Appinments",
+    description="EPS management API Appoinments",
     version="0.1"
 )
 
@@ -42,3 +43,4 @@ def root():
     return {
         "message": "ok"
     }
+app.include_router(AppoinmentRouter.router, prefix="/api")
