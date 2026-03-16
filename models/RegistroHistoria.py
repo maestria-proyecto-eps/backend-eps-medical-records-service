@@ -13,7 +13,10 @@ class registroHistoria(Base):
     observaciones = Column(VARCHAR(50), nullable=False)
     tratamiento = Column(VARCHAR(50), nullable=False)
     id_historia= Column(BigInteger, nullable=False)
-    id_cita= Column(Integer, ForeignKey('Citas.id_cita') nullable=False)
+    id_cita= Column(Integer, ForeignKey('Citas.id_cita'), nullable=False)
     id_diagnostico= Column(Integer, nullable=False)
 
     cita = relationship('Citas', back_populates='registros_historia')
+
+    def __repr__(self):
+        return f"registroHistoria(id_registro={self.id_registro}, observaciones='{self.observaciones}', tratamiento='{self.tratamiento}', id_historia={self.id_historia}, id_cita={self.id_cita}, id_diagnostico={self.id_diagnostico})"
