@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 
-from models import RegistroHistoria
+from models.RegistroHistoria import RegistroHistoria
 
 
 class RegistroRepository:

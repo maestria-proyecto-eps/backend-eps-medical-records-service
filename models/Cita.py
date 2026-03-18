@@ -9,13 +9,14 @@ class Cita(Base):
     id_cita = Column(Integer, primary_key=True)
     id_paciente = Column(Integer, nullable=False)
     id_remision = Column(Integer, nullable=False)
-    id_agenta = Column(Integer, ForeignKey('agenda.id_agenda'), nullable=False)
+    id_agenda = Column(Integer, ForeignKey("agenda.id_agenda"), nullable=False)
 
-    agenda = relationship('agenda', back_populates='citas')
+    agenda = relationship("Agenda", back_populates="cita")
+    registro_historia = relationship("RegistroHistoria", uselist=False, back_populates="cita")
 
     @property
     def id_especialidad(self):
         return self.agenda.id_especialidad if self.agenda else None
 
     def __repr__(self):
-        return f"Cita(id_cita={self.id_cita}, id_paciente={self.id_paciente}, id_remision={self.id_remision}, id_agenta={self.id_agenta})"
+        return f"Cita(id_cita={self.id_cita}, id_paciente={self.id_paciente}, id_remision={self.id_remision}, id_agenda={self.id_agenda})"

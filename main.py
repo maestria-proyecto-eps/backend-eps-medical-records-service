@@ -2,6 +2,8 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from core.logger import setup_logging, get_logger
 from routers import AppoinmentRouter
+from models.Agenda import Agenda
+from models.Cita import Cita
 
 app = FastAPI(
     title="EPS API Appinments",
