@@ -12,7 +12,7 @@ class HistoriaClinica(Base):
     fecha_inicio = Column(Date, nullable=False)
     fecha_ult_actualizacion = Column(Date, nullable=False)
 
-    registros_historia = relationship('RegistroHistoria', backref='historia_clinica')
+    registros_historia = relationship('RegistroHistoria', back_populates='historia_clinica')
 
     def __repr__(self):
         return (f"HistoriaClinica(id_historia={self.id_historia}, id_paciente={self.id_paciente}, "

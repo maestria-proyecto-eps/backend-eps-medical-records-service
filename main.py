@@ -1,9 +1,12 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from core.logger import setup_logging, get_logger
-from routers import AppoinmentRouter
+from routers import AppoinmentRouter, PattienRouter
 from models.Agenda import Agenda
 from models.Cita import Cita
+from models.CatalogoDiagnostico import CatalogoDiagnostico
+from models.HistoriaClinica import HistoriaClinica
+from models.RegistroHistoria import RegistroHistoria
 
 app = FastAPI(
     title="EPS API Appinments",
@@ -46,3 +49,4 @@ def root():
         "message": "ok"
     }
 app.include_router(AppoinmentRouter.router, prefix="/api")
+app.include_router(PattienRouter.router, prefix="/api")

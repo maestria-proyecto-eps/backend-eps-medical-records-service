@@ -10,7 +10,7 @@ class CatalogoDiagnostico(Base):
     id_diagnostico = Column(Integer, primary_key=True)
     nombre_enfermedad = Column(VARCHAR(50), nullable=False)
 
-    registros_historia = relationship('RegistroHistoria', backref='catalogo_diagnostico')
+    registros_historia = relationship('RegistroHistoria', back_populates='catalogo_diagnostico')
 
     def __repr__(self):
         return (f"CatalogoDiagnostico(id_diagnostico={self.id_diagnostico}, "
