@@ -1,10 +1,11 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from core.logger import setup_logging, get_logger
-from routers import AppoinmentRouter, DiagnosticoRouter, PattienRouter
+from routers import AppoinmentRouter, DiagnosticoRouter, MedicamentoRouter, PattienRouter
 from models.Agenda import Agenda
 from models.Cita import Cita
 from models.CatalogoDiagnostico import CatalogoDiagnostico
+from models.Medicamento import Medicamento
 from models.HistoriaClinica import HistoriaClinica
 from models.RegistroHistoria import RegistroHistoria
 
@@ -51,3 +52,4 @@ def root():
 app.include_router(AppoinmentRouter.router, prefix="/api")
 app.include_router(PattienRouter.router, prefix="/api")
 app.include_router(DiagnosticoRouter.router, prefix="/api")
+app.include_router(MedicamentoRouter.router, prefix="/api")
