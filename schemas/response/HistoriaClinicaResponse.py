@@ -12,6 +12,11 @@ class RegistroHistoriaResponse(BaseModel):
     id_diagnostico: int
     nombre_enfermedad: str
 
+    model_config={
+        "from_attributes": True,
+        "populate_by_name": True
+    }
+
 
 class HistoriaClinicaResponse(BaseModel):
     id_historia: int
@@ -19,3 +24,8 @@ class HistoriaClinicaResponse(BaseModel):
     fecha_inicio: date
     fecha_ult_actualizacion: date
     registros_historia: List[RegistroHistoriaResponse] = []
+    
+    model_config={
+        "from_attributes": True,
+        "populate_by_name": True
+    }

@@ -15,7 +15,7 @@ class RegistroHistoria(Base):
 
     cita = relationship('Cita', uselist=False, back_populates='registro_historia')
     historia_clinica = relationship('HistoriaClinica', back_populates='registros_historia')
-    catalogo_diagnostico = relationship('CatalogoDiagnostico', back_populates='registros_historia')
+    catalogo_diagnostico = relationship('CatalogoDiagnostico',uselist=False, back_populates='registros_historia')
 
     @property
     def nombre_enfermedad(self):
