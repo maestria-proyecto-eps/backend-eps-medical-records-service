@@ -1,5 +1,6 @@
 from datetime import date
 from typing import List
+from uuid import UUID
 
 from pydantic import BaseModel
 
@@ -19,7 +20,7 @@ class RegistroHistoriaResponse(BaseModel):
 
 
 class HistoriaClinicaResponse(BaseModel):
-    id_historia: int
+    id_historia: UUID
     id_paciente: int
     fecha_inicio: date
     fecha_ult_actualizacion: date

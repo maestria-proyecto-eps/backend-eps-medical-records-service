@@ -1,4 +1,4 @@
-from sqlalchemy import BigInteger, Column, Date, Integer
+from sqlalchemy import BigInteger, Column, Date, String, Uuid
 from sqlalchemy.orm import relationship
 
 from db.session import Base
@@ -7,7 +7,7 @@ from db.session import Base
 class HistoriaClinica(Base):
     __tablename__ = 'historias_clinicas'
 
-    id_historia = Column(BigInteger, primary_key=True)
+    id_historia = Column(Uuid, primary_key=True)
     id_paciente = Column(BigInteger, nullable=False)
     fecha_inicio = Column(Date, nullable=False)
     fecha_ult_actualizacion = Column(Date, nullable=False)

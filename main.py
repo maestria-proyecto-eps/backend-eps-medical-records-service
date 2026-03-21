@@ -8,6 +8,10 @@ from models.CatalogoDiagnostico import CatalogoDiagnostico
 from models.Medicamento import Medicamento
 from models.HistoriaClinica import HistoriaClinica
 from models.RegistroHistoria import RegistroHistoria
+from models.Inventario import Inventario
+from models.PrescripcionesItems import PrescripcionesItems
+from models.Prescripciones import Prescripciones
+from models.Remisiones import Remisiones
 
 app = FastAPI(
     title="EPS API Appinments",
