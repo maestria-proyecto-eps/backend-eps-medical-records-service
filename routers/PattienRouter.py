@@ -22,7 +22,7 @@ def get_appoinment(id: int, service: HistoriaService = Depends(getHistoriaServic
          return model.toHttpResponse(status.HTTP_404_NOT_FOUND)
     return model.toHttpResponse()
 
-@router.post("{id}/medical-history", response_model=Response[HistoriaClinicaResponse])
+@router.post("/{id}/medical-history", response_model=Response[HistoriaClinicaResponse])
 def crear_historia_clinica(id: int, service: HistoriaService = Depends(getHistoriaService)):
     """Crea una nueva historia clínica con id autoincremental"""
     historiaRq = CrearHistoriaClinicaRequest(id_paciente=id)
