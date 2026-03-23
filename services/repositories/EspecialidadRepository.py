@@ -9,3 +9,10 @@ class EspecialidadRepository:
 
     def exists_especialidad_by_id(self, id_especialidad):
         return self.db.query(self.db.query(Especialidad).filter(Especialidad.id_especialidad == id_especialidad).exists()).scalar()
+    
+    def get_especialidad_by_id(self, id_especialidad: int) -> Especialidad | None:
+            return (
+                self.db.query(Especialidad)
+                .filter(Especialidad.id_especialidad == id_especialidad)
+                .first()
+            )

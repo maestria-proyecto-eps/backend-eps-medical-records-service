@@ -4,7 +4,7 @@ from db.session import BaseAdmin
 
 
 class Persona(BaseAdmin):
-    __tablename__ = 'personas'
+    __tablename__ = 'persona'
 
     num_documento = Column(BigInteger, primary_key=True)
     nombres = Column(String(50), nullable=False)

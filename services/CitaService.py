@@ -6,6 +6,7 @@ from schemas.response.AppointmentResponse import AppointmentResponse
 from schemas.response.GenericResponse import Response
 from schemas.response.HistoriaClinicaResponse import RegistroHistoriaResponse
 from schemas.response.RemisionResponse import RemisionResponse
+from services.repositories import PersonaRepository
 from services.repositories.CitaRepository import CitaRepository
 from services.repositories.RegistroRepository import RegistroRepository
 from services.repositories.CatalogoDiagnosticoRepository import CatalogoDiagnosticoRepository
@@ -16,7 +17,6 @@ from services.repositories.HistoriaRepository import HistoriaRepository
 from services.repositories.EspecialidadRepository import EspecialidadRepository
 from services.repositories.RemisionesRepository import RemisionesRepository
 from models.HistoriaClinica import HistoriaClinica
-from sqlalchemy.orm import Session
 
 
 class CitatService:
@@ -27,7 +27,8 @@ class CitatService:
                  repoPrescripcionesItems: PrescripcionesItemsRepository,
                  repoHistoria: HistoriaRepository,
                  repoEspecialidad: EspecialidadRepository,
-                 repoRemisiones: RemisionesRepository):
+                 repoRemisiones: RemisionesRepository,
+                 repoPersona: PersonaRepository):
         self.repo = repo
         self.repoRegistro = repoRegistro
         self.repoCatalogoDiagnostico = repoCatalogoDiagnostico
@@ -36,6 +37,7 @@ class CitatService:
         self.repoPrescripcionesItems = repoPrescripcionesItems
         self.repoHistoria = repoHistoria
         self.repoEspecialidad = repoEspecialidad
+        self.repoPersona= repoPersona
         self.repoRemisiones = repoRemisiones
 
     def getRegistroCitaById(self, id_cita):
@@ -45,7 +47,22 @@ class CitatService:
         cita = self.repo.get_cita_by_id(id_cita)
         if cita is None:
             return Response.error("La cita no existe")
-        return Response.ok(AppointmentResponse.model_validate(cita),"Cita obtenida exitosamente")
+        info_paciente = self.repoPersona.get_usuario_by_num_documento(cita.id_paciente)
+        infoEspecialidad = self.repoEspecialidad.get_especialidad_by_id(cita.id_especialidad)
+        data = AppointmentResponse.model_validate(cita).model_dump()
+
+        data["nombreUsuario"] = (
+        f"{info_paciente.nombres} {info_paciente.apellidos}"
+        if info_paciente else "No encontrado"
+        )
+        data["nombreEspecialidad"] = (
+            infoEspecialidad.nombre_especialidad
+            if infoEspecialidad else "No encontrado"
+        )
+
+
+
+        return Response.ok(data,"Cita obtenida exitosamente")
 
     def crear_registro_historia(self, registro_data: RegistroHistoriaRequest, id_cita: int):
         """Crea un registro de historia clínica con validaciones y transacción"""

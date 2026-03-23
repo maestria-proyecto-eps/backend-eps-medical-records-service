@@ -52,11 +52,13 @@ def getCitaService(citaRepository = Depends(getCitaRepository),
                    prescripcionesItemsRepository = Depends(getPrescripcionesItemsRepository),
                    historiaRepository = Depends(getHistoriaRepository),
                    especialidadRepository = Depends(getetEspecialidadRepository),
-                   remisionesRepository = Depends(getRemisionesRepository)):
+                   remisionesRepository = Depends(getRemisionesRepository),
+                   repositoryPersona = Depends(getUsuarioRepository)) -> CitatService:
     return CitatService(citaRepository, registroRepository, diagnosticoRepository, 
                        medicamentoRepository, prescripcionesRepository, 
                        prescripcionesItemsRepository, historiaRepository,
-                       especialidadRepository, remisionesRepository)
+                       especialidadRepository, remisionesRepository,
+                       repositoryPersona)
 def getHistoriaService(historiaRepository = Depends(getHistoriaRepository)):
     return HistoriaService(historiaRepository)
 def getDiagnosticoService(diagnosticoRepository = Depends(getDiagnosticoRepository)):
