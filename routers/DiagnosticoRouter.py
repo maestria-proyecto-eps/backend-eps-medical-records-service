@@ -15,7 +15,7 @@ router = APIRouter(
 )
 
 @router.get("/search", response_model=Response[List[DiagnosticoResponse]])
-def get_appoinment(id: int=None, nombre: str=None, service: CatalogoDiagnosticoService = Depends(getDiagnosticoService)):
+def get_diagnosticos(id: int=None, nombre: str=None, service: CatalogoDiagnosticoService = Depends(getDiagnosticoService)):
     model = service.getDiagnostico(id,nombre)
     if(model.hasError==True):
          return model.toHttpResponse(status.HTTP_400_BAD_REQUEST)
