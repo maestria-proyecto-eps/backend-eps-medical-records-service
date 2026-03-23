@@ -11,6 +11,8 @@ from sqlalchemy.pool import StaticPool
 from fastapi.testclient import TestClient
 
 from main import app
+from models.Especialidad import Especialidad
+from models.Persona import Persona
 from models.CatalogoDiagnostico import CatalogoDiagnostico
 from models.Medicamento import Medicamento
 from models.RegistroHistoria import RegistroHistoria
@@ -18,7 +20,7 @@ from models.Agenda import Agenda
 from models.Cita import Cita
 from models.HistoriaClinica import HistoriaClinica
 
-from db.session import Base, get_db
+from db.session import Base, BaseAdmin, get_db, get_db_admin
 
 SQLALCHEMY_DATABASE_URL = "sqlite://"
 
@@ -41,13 +43,38 @@ def override_get_db():
     finally:
         db.close()
 
+# Configuración DB2 (admin)
+SQLALCHEMY_DATABASE_URL_ADMIN = "sqlite://"
+engine_admin = create_engine(
+    SQLALCHEMY_DATABASE_URL_ADMIN,
+    connect_args={"check_same_thread": False},
+    poolclass=StaticPool,
+)
+TestingSessionLocalAdmin = sessionmaker(
+    autocommit=False,
+    autoflush=False,
+    bind=engine_admin,
+)
+
+def override_get_db_admin():
+    db = TestingSessionLocalAdmin()
+    try:
+        yield db
+    finally:
+        db.close()
+
 
 @pytest.fixture(scope="session", autouse=True)
 def setup_test_db():
     Base.metadata.create_all(bind=engine)
     app.dependency_overrides[get_db] = override_get_db
+    BaseAdmin.metadata.create_all(bind=engine_admin)
+    app.dependency_overrides[get_db_admin] = override_get_db_admin
+
     yield
     Base.metadata.drop_all(bind=engine)
+    BaseAdmin.metadata.drop_all(bind=engine_admin)
+
     app.dependency_overrides.clear()
 
 
@@ -146,6 +173,29 @@ def create_medicamento():
     db.refresh(medicamento)
 
     yield medicamento
+
+@pytest.fixture()
+def create_persona():
+    db = TestingSessionLocalAdmin()
+
+    p = Persona(num_documento=123456789, nombres="Juan", apellidos="Pérez")
+    db.add(p)
+    db.commit()
+    db.refresh(p)
+
+    yield p
+@pytest.fixture()
+def create_especialidad():
+    db = TestingSessionLocalAdmin()
+
+    p = Especialidad(id_especialidad=1, nombre_especialidad="Cardiología")
+    db.add(p)
+    db.commit()
+    db.refresh(p)
+
+    yield p
+
 @pytest.fixture()
 def client():
     return TestClient(app)
+

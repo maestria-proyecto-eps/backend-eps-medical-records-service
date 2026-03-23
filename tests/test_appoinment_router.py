@@ -113,3 +113,80 @@ def test_create_consultation_conflict_registro_existente(client, create_registro
     assert body["hasError"] is True
     assert body["message"] == "La cita ya tiene un registro asociado"
     assert body["data"] is None
+
+def test_create_remision_cita_no_existe(client):
+    registro_data = {
+        "id_registro":1,
+        "id_especialidad": 1,
+        "fecha_expiracion": "2030-01-01"
+    }
+    
+    response = client.post("/api/appoinment/99999/remision", json=registro_data)
+
+    assert response.status_code == 404
+    body = response.json()
+    assert body["hasError"] is True
+    assert body["message"] == "La cita no existe"
+    assert body["data"] is None
+
+def test_create_remision_especialidad_no_existe(client,create_agenda_and_cita):
+    agenda, cita = create_agenda_and_cita
+    registro_data = {
+        "id_registro": 1,
+        "id_especialidad": 99999,
+        "fecha_expiracion": "2030-01-01"
+    }
+    
+    response = client.post("/api/appoinment/1/remision", json=registro_data)
+
+    assert response.status_code == 422
+    body = response.json()
+    assert body["hasError"] is True
+    assert body["message"] == "La especialidad no existe"
+    assert body["data"] is None
+def test_create_remision_fecha_invalida(client,create_agenda_and_cita,create_especialidad):
+    agenda, cita = create_agenda_and_cita
+    registro_data = {
+        "id_registro": 1,
+        "id_especialidad": 1,
+        "fecha_expiracion": "2020-01-01"
+    }
+    
+    response = client.post("/api/appoinment/1/remision", json=registro_data)
+
+    assert response.status_code == 422
+    body = response.json()
+    assert body["hasError"] is True
+    assert body["message"] == "La fecha de expiración debe ser una fecha futura"
+    assert body["data"] is None
+
+def test_create_remision_registro_invalido(client,create_agenda_and_cita):
+    agenda, cita = create_agenda_and_cita   
+    registro_data = {
+        "id_registro": 99999,
+        "id_especialidad": 1,
+        "fecha_expiracion": "2030-01-01"
+    }
+    
+    response = client.post("/api/appoinment/1/remision", json=registro_data)
+
+    assert response.status_code == 403
+    body = response.json()
+    assert body["hasError"] is True
+    assert body["message"] == "El id_registro no pertenece a la cita"
+    assert body["data"] is None
+def test_create_remision_valido(client,create_agenda_and_cita):
+    agenda, cita = create_agenda_and_cita   
+    registro_data = {
+        "id_registro": 1,
+        "id_especialidad": 1,
+        "fecha_expiracion": "2030-01-01"
+    }
+    
+    response = client.post("/api/appoinment/1/remision", json=registro_data)
+
+    assert response.status_code == 201
+    body = response.json()
+    assert body["hasError"] is False
+    assert body["message"] == "Remisión creada exitosamente"
+    assert body["data"] is not None    
