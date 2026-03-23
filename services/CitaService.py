@@ -1,9 +1,11 @@
-from datetime import datetime
+from datetime import datetime, date
 import uuid
 from schemas.request.RegistroHistoriaRequest import RegistroHistoriaRequest
+from schemas.request.RemisionRequest import RemisionRequest
 from schemas.response.AppointmentResponse import AppointmentResponse
 from schemas.response.GenericResponse import Response
 from schemas.response.HistoriaClinicaResponse import RegistroHistoriaResponse
+from schemas.response.RemisionResponse import RemisionResponse
 from services.repositories.CitaRepository import CitaRepository
 from services.repositories.RegistroRepository import RegistroRepository
 from services.repositories.CatalogoDiagnosticoRepository import CatalogoDiagnosticoRepository
@@ -11,6 +13,8 @@ from services.repositories.MedicamentoRepository import MedicamentoRepository
 from services.repositories.PrescripcionesRepository import PrescripcionesRepository
 from services.repositories.PrescripcionesItemsRepository import PrescripcionesItemsRepository
 from services.repositories.HistoriaRepository import HistoriaRepository
+from services.repositories.EspecialidadRepository import EspecialidadRepository
+from services.repositories.RemisionesRepository import RemisionesRepository
 from models.HistoriaClinica import HistoriaClinica
 from sqlalchemy.orm import Session
 
@@ -21,7 +25,9 @@ class CitatService:
                  repoMedicamento: MedicamentoRepository ,
                  repoPrescripciones: PrescripcionesRepository ,
                  repoPrescripcionesItems: PrescripcionesItemsRepository,
-                 repoHistoria: HistoriaRepository ):
+                 repoHistoria: HistoriaRepository,
+                 repoEspecialidad: EspecialidadRepository,
+                 repoRemisiones: RemisionesRepository):
         self.repo = repo
         self.repoRegistro = repoRegistro
         self.repoCatalogoDiagnostico = repoCatalogoDiagnostico
@@ -29,6 +35,8 @@ class CitatService:
         self.repoPrescripciones = repoPrescripciones
         self.repoPrescripcionesItems = repoPrescripcionesItems
         self.repoHistoria = repoHistoria
+        self.repoEspecialidad = repoEspecialidad
+        self.repoRemisiones = repoRemisiones
 
     def getRegistroCitaById(self, id_cita):
         if(self.repoRegistro.exists_by_id_cita(id_cita)):
@@ -142,3 +150,30 @@ class CitatService:
         except Exception as e:
             db_session.rollback()
             return Response.error(f"Error al crear registro: {str(e)}")
+
+    def crear_remision(self, id_cita: int, remision_data: RemisionRequest):
+        # 1. Validar que la cita existe
+        cita = self.repo.get_cita_by_id(id_cita)
+        if cita is None:
+            return Response.error("La cita no existe")
+
+        # 2. Validar especialidad
+        if not self.repoEspecialidad.exists_especialidad_by_id(remision_data.id_especialidad):
+            return Response.error("La especialidad no existe")
+
+        # 3. Validar expiración futura
+        if remision_data.fecha_expiracion <= date.today():
+            return Response.error("La fecha de expiración debe ser una fecha futura")
+
+        # 4. Validar que el registro pertenece a esta cita
+        if not self.repoRegistro.exists_by_id_registro_and_id_cita(remision_data.id_registro, id_cita):
+            return Response.error("El id_registro no pertenece a la cita")
+
+        nueva_remision = self.repoRemisiones.add_remision(
+            fecha_expiracion=remision_data.fecha_expiracion,
+            id_paciente=cita.id_paciente,
+            id_registro=remision_data.id_registro,
+            id_especialidad=remision_data.id_especialidad
+        )
+        remision_response = RemisionResponse.model_validate(nueva_remision)
+        return Response.ok(remision_response, "Remisión creada exitosamente")

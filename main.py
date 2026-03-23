@@ -12,6 +12,8 @@ from models.Inventario import Inventario
 from models.PrescripcionesItems import PrescripcionesItems
 from models.Prescripciones import Prescripciones
 from models.Remisiones import Remisiones
+from models.Especialidad import Especialidad
+from models.Persona import Persona
 
 app = FastAPI(
     title="EPS API Appinments",
