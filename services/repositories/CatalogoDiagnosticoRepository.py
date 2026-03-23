@@ -19,3 +19,7 @@ class CatalogoDiagnosticoRepository:
             .limit(20)
         )
         return self.db.execute(query).scalars().all()
+
+    def existe_diagnostico_por_id(self, id_diagnostico: int) -> bool:
+        """Valida si existe un diagnóstico con el id especificado"""
+        return self.db.query(CatalogoDiagnostico).filter(CatalogoDiagnostico.id_diagnostico == id_diagnostico).first() is not None

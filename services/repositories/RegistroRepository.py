@@ -9,3 +9,10 @@ class RegistroRepository:
     def exists_by_id_cita(self, id_cita: int) -> bool:
         return self.db.query(self.db.query(RegistroHistoria).filter(RegistroHistoria.id_cita == id_cita).exists()).scalar()
 
+    def crear_registro(self, registro_data: dict):
+        """Crea un nuevo registro de historia (sin commit, para usar en transacciones)"""
+        nuevo_registro = RegistroHistoria(**registro_data)
+        self.db.add(nuevo_registro)
+        # No hacer commit aquí, se hace en la transacción
+        return nuevo_registro
+

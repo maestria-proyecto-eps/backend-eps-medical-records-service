@@ -11,6 +11,8 @@ from services.repositories.CitaRepository import CitaRepository
 from services.repositories.HistoriaRepository import HistoriaRepository
 from services.repositories.MedicamentoRepository import MedicamentoRepository
 from services.repositories.RegistroRepository import RegistroRepository
+from services.repositories.PrescripcionesRepository import PrescripcionesRepository
+from services.repositories.PrescripcionesItemsRepository import PrescripcionesItemsRepository
 
 #Repositories
 def getCitaRepository(db = Depends(get_db))-> CitaRepository:
@@ -25,9 +27,23 @@ def getDiagnosticoRepository(db = Depends(get_db))-> CatalogoDiagnosticoReposito
 def getMedicamentoRepository(db = Depends(get_db))-> MedicamentoRepository:
     return MedicamentoRepository(db)
 
+def getPrescripcionesRepository(db = Depends(get_db))-> PrescripcionesRepository:
+    return PrescripcionesRepository(db)
+
+def getPrescripcionesItemsRepository(db = Depends(get_db))-> PrescripcionesItemsRepository:
+    return PrescripcionesItemsRepository(db)
+
 #Services
-def getCitaService(citaRepository = Depends(getCitaRepository), registroRepository = Depends(getRegistroRepository)):
-    return CitatService(citaRepository, registroRepository)
+def getCitaService(citaRepository = Depends(getCitaRepository), 
+                   registroRepository = Depends(getRegistroRepository),
+                   diagnosticoRepository = Depends(getDiagnosticoRepository),
+                   medicamentoRepository = Depends(getMedicamentoRepository),
+                   prescripcionesRepository = Depends(getPrescripcionesRepository),
+                   prescripcionesItemsRepository = Depends(getPrescripcionesItemsRepository),
+                   historiaRepository = Depends(getHistoriaRepository)):
+    return CitatService(citaRepository, registroRepository, diagnosticoRepository, 
+                       medicamentoRepository, prescripcionesRepository, 
+                       prescripcionesItemsRepository, historiaRepository)
 def getHistoriaService(historiaRepository = Depends(getHistoriaRepository)):
     return HistoriaService(historiaRepository)
 def getDiagnosticoService(diagnosticoRepository = Depends(getDiagnosticoRepository)):

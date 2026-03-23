@@ -3,7 +3,7 @@ from typing import List
 from fastapi import APIRouter, Depends
 from starlette import status
 
-from dependencies import getDiagnosticoService, getHistoriaService
+from dependencies import getDiagnosticoService
 from schemas.response.DiagnostcoResponse import DiagnosticoResponse
 from schemas.response.GenericResponse import Response
 from services import CatalogoDiagnosticoService

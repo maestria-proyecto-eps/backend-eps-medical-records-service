@@ -11,7 +11,7 @@ class PrescripcionesItems(Base):
     cantidad = Column(Integer, nullable=False)
     dosis = Column(VARCHAR(50), nullable=False)
     duracion = Column(Integer, nullable=False)
-    id_prescription = Column(Integer, ForeignKey('prescripciones.id_prescription'), nullable=False)
+    id_prescripcion = Column(Integer, ForeignKey('prescripciones.id_prescripcion'), nullable=False)
     id_medicamento = Column(Integer, ForeignKey('medicamentos.codigo'), nullable=False)
 
     prescripcion = relationship('Prescripciones', back_populates='prescripciones_items')
@@ -19,5 +19,5 @@ class PrescripcionesItems(Base):
 
     def __repr__(self):
         return (f"PrescripcionesItems(id_items={self.id_items}, cantidad={self.cantidad}, "
-                f"dosis='{self.dosis}', duracion={self.duracion}, id_prescription={self.id_prescription}, "
+                f"dosis='{self.dosis}', duracion={self.duracion}, id_prescripcion={self.id_prescripcion}, "
                 f"id_medicamento={self.id_medicamento})")
