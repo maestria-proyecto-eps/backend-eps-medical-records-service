@@ -1,5 +1,4 @@
-from pydantic_settings import BaseSettings
-
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 class Settings(BaseSettings):
     DB_OP_USER: str
@@ -18,7 +17,10 @@ class Settings(BaseSettings):
     JWT_SECRET: str
     JWT_ALGORITHM: str
 
-    class Config:
-        env_file = "develop.env"
+    model_config = SettingsConfigDict(
+        env_file=("develop.env", ".env", ".env.example"),
+        extra="ignore"
+    )
 
 settings = Settings()
+
