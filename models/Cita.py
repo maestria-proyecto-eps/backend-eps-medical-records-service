@@ -1,8 +1,7 @@
-from sqlalchemy import Column, ForeignKey, Integer
+from sqlalchemy import Boolean, Column, ForeignKey, Integer
 from sqlalchemy.orm import relationship
 
 from db.session import Base
-
 
 class Cita(Base):
     __tablename__ = 'citas'
@@ -10,6 +9,7 @@ class Cita(Base):
     id_paciente = Column(Integer, nullable=False)
     id_remision = Column(Integer, nullable=False)
     id_agenda = Column(Integer, ForeignKey("agenda.id_agenda"), nullable=False)
+    asistio = Column(Boolean, nullable=True)
 
     agenda = relationship("Agenda", back_populates="cita")
     registro_historia = relationship("RegistroHistoria", uselist=False, back_populates="cita")
@@ -19,4 +19,5 @@ class Cita(Base):
         return self.agenda.id_especialidad if self.agenda else None
 
     def __repr__(self):
-        return f"Cita(id_cita={self.id_cita}, id_paciente={self.id_paciente}, id_remision={self.id_remision}, id_agenda={self.id_agenda})"
+        return f"Cita(id_cita={self.id_cita}, id_paciente={self.id_paciente}, id_remision={self.id_remision}, id_agenda={self.id_agenda}, asistio={self.asistio})"
+    

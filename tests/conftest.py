@@ -1,7 +1,7 @@
 from pathlib import Path
 import os
 import sys
-from datetime import date, time
+from datetime import date, time, timedelta
 import uuid
 
 import pytest
@@ -107,6 +107,38 @@ def create_agenda_and_cita():
     db.refresh(cita)
 
     yield agenda, cita
+
+@pytest.fixture
+def create_agenda_and_cita_vencida():
+    db = TestingSessionLocal()
+    cita_id = 999
+    paciente_id = 99
+    especialidad_id = 1
+
+    agenda = Agenda(
+        id_doctor=2000 + cita_id,
+        hora_inicio=time(hour=8),
+        hora_fin=time(hour=9),
+        fecha=date.today() - timedelta(days=1),
+        estado=1,
+        id_especialidad=especialidad_id,
+    )
+    db.add(agenda)
+    db.commit()
+    db.refresh(agenda)
+
+    cita = Cita(
+        id_paciente=paciente_id,
+        id_remision=0,
+        id_agenda=agenda.id_agenda,
+        asistio=None,
+    )
+    db.add(cita)
+    db.commit()
+    db.refresh(cita)
+
+    yield agenda, cita
+
 @pytest.fixture
 def create_historia_and_catalogo(create_agenda_and_cita):
     db = TestingSessionLocal()
@@ -157,6 +189,7 @@ def create_registro_historia( create_historia_and_catalogo):
     db.refresh(registro)
 
     yield registro
+
 @pytest.fixture 
 def create_medicamento():
     db= TestingSessionLocal()
@@ -195,6 +228,15 @@ def create_especialidad():
 
     yield p
 
+@pytest.fixture()
+def db_session():
+    db = TestingSessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
+        
 @pytest.fixture()
 def client():
     return TestClient(app)
