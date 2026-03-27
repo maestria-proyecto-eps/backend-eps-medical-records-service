@@ -1,4 +1,22 @@
-﻿def test_get_consultation_context_cita_no_existe(client):
+﻿import pytest
+from tests.conftest import TestingSessionLocal
+from models.Cita import Cita
+from datetime import date, timedelta, time
+from services.CitaService import CitatService
+from services.repositories.CitaRepository import CitaRepository
+from services.repositories.RegistroRepository import RegistroRepository
+from services.repositories.HistoriaRepository import HistoriaRepository
+from services.repositories.CatalogoDiagnosticoRepository import CatalogoDiagnosticoRepository
+from services.repositories.MedicamentoRepository import MedicamentoRepository
+from services.repositories.PrescripcionesRepository import PrescripcionesRepository
+from services.repositories.PrescripcionesItemsRepository import PrescripcionesItemsRepository
+from services.repositories.RemisionesRepository import RemisionesRepository
+from services.repositories.EspecialidadRepository import EspecialidadRepository
+from services.repositories.PersonaRepository import PersonaRepository
+
+from models.Agenda import Agenda
+
+def test_get_consultation_context_cita_no_existe(client):
     response = client.get("/api/appoinment/99999/consultation-context")
 
     assert response.status_code == 404
@@ -61,7 +79,7 @@ def test_create_consultation_cita_no_existe(client):
     assert body["data"] is None
 
 
-def test_create_consultation_exitoso(client, create_agenda_and_cita,create_medicamento, create_diagnostico):
+def test_create_consultation_exitoso(client, create_agenda_and_cita, create_medicamento, create_diagnostico, db_session):
     agenda, cita = create_agenda_and_cita
     medicamento= create_medicamento
     diagnostico = create_diagnostico
@@ -87,6 +105,10 @@ def test_create_consultation_exitoso(client, create_agenda_and_cita,create_medic
     assert body["message"] == "Registro de historia creado exitosamente"
     assert body["data"] is not None
     assert body["data"]["id_cita"] == cita.id_cita
+
+    cita_actualizada = db_session.query(Cita).filter(Cita.id_cita == cita.id_cita).first()
+    assert cita_actualizada is not None
+    assert cita_actualizada.asistio is True
 
 
 def test_create_consultation_conflict_registro_existente(client, create_registro_historia):
@@ -190,3 +212,28 @@ def test_create_remision_valido(client,create_agenda_and_cita):
     assert body["hasError"] is False
     assert body["message"] == "Remisión creada exitosamente"
     assert body["data"] is not None    
+
+def test_procesar_inasistencias_marca_cita_vencida(create_agenda_and_cita_vencida, db_session):
+    agenda, cita = create_agenda_and_cita_vencida
+
+    service = CitatService(
+        CitaRepository(db_session),
+        RegistroRepository(db_session),
+        HistoriaRepository(db_session),
+        CatalogoDiagnosticoRepository(db_session),
+        MedicamentoRepository(db_session),
+        PrescripcionesRepository(db_session),
+        PrescripcionesItemsRepository(db_session),
+        RemisionesRepository(db_session),
+        EspecialidadRepository(db_session),
+        PersonaRepository(db_session),
+    )
+
+    response = service.procesar_inasistencias()
+
+    cita_actualizada = db_session.query(Cita).filter(Cita.id_cita == cita.id_cita).first()
+
+    assert response.hasError is False
+    assert response.data["citas_procesadas"] >= 1
+    assert cita_actualizada is not None
+    assert cita_actualizada.asistio is False

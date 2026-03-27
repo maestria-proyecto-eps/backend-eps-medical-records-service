@@ -160,6 +160,7 @@ class CitatService:
                 "id_diagnostico": registro_data.id_diagnostico
             }
             nuevo_registro = self.repoRegistro.crear_registro(registro_dict)
+            cita.asistio = True
             db_session.commit()
 
             return Response.ok(RegistroHistoriaResponse.model_validate(nuevo_registro), "Registro de historia creado exitosamente")
@@ -167,6 +168,24 @@ class CitatService:
         except Exception as e:
             db_session.rollback()
             return Response.error(f"Error al crear registro: {str(e)}")
+
+    def procesar_inasistencias(self):
+        try:
+            db_session = self.repo.db
+            citas_vencidas = self.repo.get_citas_vencidas_sin_asistencia()
+
+            for cita in citas_vencidas:
+                cita.asistio = False
+
+            db_session.commit()
+            return Response.ok(
+                {"citas_procesadas": len(citas_vencidas)},
+                "Inasistencias procesadas exitosamente"
+            )
+
+        except Exception as e:
+            db_session.rollback()
+            return Response.error(f"Error al procesar inasistencias: {str(e)}")
 
     def crear_remision(self, id_cita: int, remision_data: RemisionRequest):
         # 1. Validar que la cita existe
