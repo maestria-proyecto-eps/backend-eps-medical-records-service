@@ -10,7 +10,7 @@ class RegistroHistoriaResponse(BaseModel):
     observaciones: str
     tratamiento: str
     id_cita: int
-    id_diagnostico: int
+    id_diagnostico: int | None
     nombre_enfermedad: str
 
     model_config={
