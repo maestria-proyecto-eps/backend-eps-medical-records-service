@@ -2,6 +2,7 @@
 from fastapi.params import Depends
 
 from db.session import get_db, get_db_admin
+from services.PreinscripcionesService import PreinscripcionesService
 from services.CatalogoDiagnosticoService import CatalogoDiagnosticoService
 from services.CitaService import CitatService
 from services.HistoriaService import HistoriaService
@@ -65,3 +66,6 @@ def getDiagnosticoService(diagnosticoRepository = Depends(getDiagnosticoReposito
     return CatalogoDiagnosticoService(diagnosticoRepository)
 def getMedicamentoService(medicamentoRepository = Depends(getMedicamentoRepository)):
     return MedicamentoService(medicamentoRepository)
+def getPreinscripcionService(preinscripcionRepository = Depends(getPrescripcionesRepository),
+                             medicamentoRepository = Depends(getMedicamentoRepository)):
+    return PreinscripcionesService(preinscripcionRepository, medicamentoRepository)
