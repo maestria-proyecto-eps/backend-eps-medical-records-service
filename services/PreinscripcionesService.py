@@ -19,7 +19,7 @@ class PreinscripcionesService:
             return Response.error("El campo 'tipo' tiene un valor inválido [1,2,3]")
         if preinscripcionData.id_atencion <= 0:
             return Response.error("El campo 'id_atencion' debe ser un número positivo")
-        for item in preinscripcionData.items:
+        for item in preinscripcionData.prescripciones_items:
             if item.cantidad <= 0:
                 return Response.error("El campo 'cantidad' en items debe ser un número positivo")
             if not item.dosis or item.dosis.strip() == "" or len(item.dosis) > 50:

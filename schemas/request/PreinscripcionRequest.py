@@ -19,7 +19,7 @@ class PreinscripcionItemRequest(BaseModel):
 class PreinscripcionRequest(BaseModel):
     id_atencion: int
     tipo: int
-    items: List[PreinscripcionItemRequest]
+    prescripciones_items: List[PreinscripcionItemRequest]
 
     model_config = {
         "from_attributes": True,
