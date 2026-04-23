@@ -19,6 +19,7 @@ from models.RegistroHistoria import RegistroHistoria
 from models.Agenda import Agenda
 from models.Cita import Cita
 from models.HistoriaClinica import HistoriaClinica
+from models.Remisiones import Remisiones
 
 from db.session import Base, BaseAdmin, get_db, get_db_admin
 
@@ -227,6 +228,22 @@ def create_especialidad():
     db.refresh(p)
 
     yield p
+
+@pytest.fixture
+def create_remision():
+    db = TestingSessionLocal()
+
+    remision = Remisiones(
+        expiracion=date.today() + timedelta(days=10),
+        id_paciente=123456789,
+        id_registro=1,
+        id_especialidad=1,
+    )
+    db.add(remision)
+    db.commit()
+    db.refresh(remision)
+
+    yield remision
 
 @pytest.fixture()
 def db_session():

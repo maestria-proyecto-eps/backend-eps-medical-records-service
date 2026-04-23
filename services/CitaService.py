@@ -213,3 +213,19 @@ class CitatService:
         )
         remision_response = RemisionResponse.model_validate(nueva_remision)
         return Response.ok(remision_response, "Remisión creada exitosamente")
+    
+    def get_referrals(self, id_especialidad: int = None, id_paciente: int = None, vigente: bool = None):
+        remisiones = self.repoRemisiones.get_all_referrals(
+            id_especialidad=id_especialidad,
+            id_paciente=id_paciente,
+            vigente=vigente
+        )
+
+        data = [RemisionResponse.model_validate(remision) for remision in remisiones]
+        return Response.ok(data, "Remisiones obtenidas exitosamente")
+
+    def get_referrals_by_patient_id(self, patient_id: int):
+        remisiones = self.repoRemisiones.get_referrals_by_patient_id(patient_id)
+
+        data = [RemisionResponse.model_validate(remision) for remision in remisiones]
+        return Response.ok(data, "Remisiones del paciente obtenidas exitosamente")
