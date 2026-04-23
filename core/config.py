@@ -1,8 +1,4 @@
 from pydantic_settings import BaseSettings, SettingsConfigDict
-<<<<<<< HEAD
-
-=======
->>>>>>> c29fd029a5783951756e7c2307b4cb42ec431e64
 
 class Settings(BaseSettings):
     DB_OP_USER: str
@@ -26,9 +22,4 @@ class Settings(BaseSettings):
         extra="ignore"
     )
 
-<<<<<<< HEAD
 settings = Settings()
-=======
-settings = Settings()
-
->>>>>>> c29fd029a5783951756e7c2307b4cb42ec431e64
