@@ -1,9 +1,10 @@
 from schemas.request import PreinscripcionRequest
 from schemas.response.GenericResponse import Response
-from schemas.response.Preinscripcionresponse import PreinscripcionResponse
+from schemas.response.Preinscripcionresponse import PreinscripcionResponse, PreinscripcionItemResponse
 from services.repositories.MedicamentoRepository import MedicamentoRepository
 from services.repositories.PrescripcionesRepository import PrescripcionesRepository
 from models.Prescripciones import Prescripciones
+from models.PrescripcionesItems import PrescripcionesItems
 
 
 class PreinscripcionesService:
@@ -29,8 +30,44 @@ class PreinscripcionesService:
             if not self.repoMedicamentos.existe_medicamento_por_codigo(item.id_medicamento):
                 return Response.error(f"El medicamento con código {item.id_medicamento} no existe")
         
-        preinscripcion= Prescripciones(**preinscripcionData.model_dump())
+        # Crear la prescripción principal
+        preinscripcion = Prescripciones(
+            id_atencion=preinscripcionData.id_atencion,
+            tipo=preinscripcionData.tipo
+        )
+        
+        # Crear los items relacionados
+        for item_data in preinscripcionData.prescripciones_items:
+            item = PrescripcionesItems(
+                cantidad=item_data.cantidad,
+                dosis=item_data.dosis,
+                duracion=item_data.duracion,
+                id_medicamento=item_data.id_medicamento
+            )
+            preinscripcion.prescripciones_items.append(item)
+        
         self.repoPreinscripciones.crear_prescripcionConGuardado(preinscripcion)
         self.repoPreinscripciones.db.commit()
         self.repoPreinscripciones.db.refresh(preinscripcion)
-        return Response.ok(PreinscripcionResponse.model_validate(preinscripcion), "Preinscripción creada exitosamente")
+        
+        # Mapear la respuesta manualmente
+        items_response = [
+            PreinscripcionItemResponse(
+                id_items=item.id_items,
+                id_medicamento=item.id_medicamento,
+                cantidad=item.cantidad,
+                dosis=item.dosis,
+                duracion=item.duracion,
+                id_preinscripcion=item.id_prescripcion
+            )
+            for item in preinscripcion.prescripciones_items
+        ]
+        
+        response = PreinscripcionResponse(
+            id_preinscripcion=preinscripcion.id_prescripcion,
+            id_atencion=preinscripcion.id_atencion,
+            tipo=preinscripcion.tipo,
+            prescripciones_items=items_response
+        )
+        
+        return Response.ok(response, "Preinscripción creada exitosamente")

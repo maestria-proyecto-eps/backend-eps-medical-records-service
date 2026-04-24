@@ -14,5 +14,5 @@ class PrescripcionesRepository:
         # No hacer commit aquí, se hace en la transacción
         return nueva_prescripcion
     
-        def crear_prescripcionConGuardado(self, prescripcion_data: Preinscripcion):
-            self.db.add(nueva_prescripcion)
+    def crear_prescripcionConGuardado(self, prescripcion_data: Preinscripcion):
+        self.db.add(prescripcion_data)
