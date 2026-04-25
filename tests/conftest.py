@@ -194,18 +194,24 @@ def create_registro_historia( create_historia_and_catalogo):
 def create_medicamento():
     db= TestingSessionLocal()
 
-    medicamento = Medicamento(
-        codigo=1,
-        nombre_medicamento="Paracetamol",
-        reg_invima=1,
-        principio_activo="Paracetamol",
-        presentacion="Tabletas"
-    )
-    db.add(medicamento)
-    db.commit()
-    db.refresh(medicamento)
+    # Verificar si ya existe el medicamento
+    medicamento_existente = db.query(Medicamento).filter(Medicamento.codigo == 1).first()
+    
+    if medicamento_existente:
+        yield medicamento_existente
+    else:
+        medicamento = Medicamento(
+            codigo=1,
+            nombre_medicamento="Paracetamol",
+            reg_invima=1,
+            principio_activo="Paracetamol",
+            presentacion="Tabletas"
+        )
+        db.add(medicamento)
+        db.commit()
+        db.refresh(medicamento)
 
-    yield medicamento
+        yield medicamento
 
 @pytest.fixture()
 def create_persona():
