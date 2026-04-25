@@ -8,7 +8,7 @@ class PreinscripcionItemResponse(BaseModel):
     id_medicamento: int
     cantidad: int
     dosis: str
-    duracion: int
+    duracion: str
     id_preinscripcion: int
     model_config = {
         "from_attributes": True,

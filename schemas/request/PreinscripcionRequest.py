@@ -9,7 +9,7 @@ class PreinscripcionItemRequest(BaseModel):
     id_medicamento: int
     cantidad: int
     dosis: str
-    duracion: int
+    duracion: str
     model_config = {
         "from_attributes": True,
         "populate_by_name": True

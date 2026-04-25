@@ -1,4 +1,7 @@
+import math
+
 from schemas.request import PreinscripcionRequest
+from schemas.response.GenericPaginatedResponse import PaginatedResponse
 from schemas.response.GenericResponse import Response
 from schemas.response.Preinscripcionresponse import PreinscripcionResponse, PreinscripcionItemResponse
 from services.repositories.MedicamentoRepository import MedicamentoRepository
@@ -25,8 +28,8 @@ class PreinscripcionesService:
                 return Response.error("El campo 'cantidad' en items debe ser un número positivo")
             if not item.dosis or item.dosis.strip() == "" or len(item.dosis) > 50:
                 return Response.error("El campo 'dosis' en items no puede estar vacío y debe tener hasta 50 caracteres")
-            if item.duracion <= 0:
-                return Response.error("El campo 'duracion' en items debe ser un número positivo")
+            if not item.duracion or item.duracion.strip() == "":
+                return Response.error("El campo 'duracion' no puede estar vacio")
             if not self.repoMedicamentos.existe_medicamento_por_codigo(item.id_medicamento):
                 return Response.error(f"El medicamento con código {item.id_medicamento} no existe")
         
@@ -50,7 +53,26 @@ class PreinscripcionesService:
         self.repoPreinscripciones.db.commit()
         self.repoPreinscripciones.db.refresh(preinscripcion)
         
-        # Mapear la respuesta manualmente
+        response = self.MapModelToDTO(preinscripcion)
+        
+        return Response.ok(response, "Preinscripción creada exitosamente")
+    
+    def GetPreinscripciones(self, idPreinscripcion: int, idAtencion: int, tipo: int, pag: int, cantidad: int):
+        if(idPreinscripcion != None and idPreinscripcion <= 0):
+            return Response.error("Id de preinscripción debe ser un número positivo")
+        if(idAtencion != None and idAtencion <= 0):
+            return Response.error("Id de atención debe ser un número positivo")
+        if(tipo != None and tipo not in [1, 2, 3]):
+            return Response.error("El campo 'tipo' tiene un valor inválido [1,2,3]")
+        preinscripciones, totalElem = self.repoPreinscripciones.obtener_preinscripcionPorFiltros(idPreinscripcion, idAtencion, tipo, pag, cantidad)
+        totalPags = math.ceil(totalElem / cantidad)
+        response = [self.MapModelToDTO(pre) for pre in preinscripciones]
+        return Response.ok(PaginatedResponse[PreinscripcionResponse](
+        data=response,
+        page=pag,
+        pages=totalPags),"Datos obtenidos exitosamente")
+
+    def MapModelToDTO(self, preinscripcion: Prescripciones) -> PreinscripcionResponse:
         items_response = [
             PreinscripcionItemResponse(
                 id_items=item.id_items,
@@ -63,11 +85,9 @@ class PreinscripcionesService:
             for item in preinscripcion.prescripciones_items
         ]
         
-        response = PreinscripcionResponse(
+        return PreinscripcionResponse(
             id_preinscripcion=preinscripcion.id_prescripcion,
             id_atencion=preinscripcion.id_atencion,
             tipo=preinscripcion.tipo,
             prescripciones_items=items_response
         )
-        
-        return Response.ok(response, "Preinscripción creada exitosamente")
