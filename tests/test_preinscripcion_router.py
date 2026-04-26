@@ -296,3 +296,30 @@ def test_get_preinscripciones_vacio(client):
     assert body["data"]["data"] == []
     assert body["data"]["page"] == 1
     assert body["data"]["pages"] == 0
+
+def test_get_preinscripciones_paciente_me_sin_datos(client, paciente_token):
+    headers = {"Authorization": f"Bearer {paciente_token}"}
+
+    response = client.get("/api/prescriptions/patients/me?pag=1&cantidad=10", headers=headers)
+
+    assert response.status_code == 200
+    body = response.json()
+    assert body["hasError"] is False
+    assert "data" in body["data"]
+    assert body["data"]["page"] == 1
+
+
+def test_get_preinscripciones_paciente_me_sin_token(client):
+    response = client.get("/api/prescriptions/patients/me?pag=1&cantidad=10")
+
+    assert response.status_code in (401, 403)
+
+
+def test_get_preinscripciones_doctor_me_forbidden_con_rol_paciente(client, paciente_token):
+    headers = {"Authorization": f"Bearer {paciente_token}"}
+
+    response = client.get("/api/prescriptions/doctors/me?pag=1&cantidad=10", headers=headers)
+
+    assert response.status_code == 403
+    body = response.json()
+    assert "no autorizado" in body["detail"].lower()

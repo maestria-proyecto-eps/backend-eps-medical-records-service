@@ -91,3 +91,39 @@ class PreinscripcionesService:
             tipo=preinscripcion.tipo,
             prescripciones_items=items_response
         )
+    
+    def GetPreinscripcionesByDoctor(self, num_documento_doctor: int, pag: int, cantidad: int):
+        if num_documento_doctor <= 0:
+            return Response.error("Documento de doctor inválido")
+        
+        
+        preinscripciones, totalElem = self.repoPreinscripciones.obtener_por_doctor(num_documento_doctor, pag, cantidad)
+        totalPags = math.ceil(totalElem / cantidad) if cantidad > 0 else 0
+        response = [self.MapModelToDTO(pre) for pre in preinscripciones]
+
+        return Response.ok(
+            PaginatedResponse[PreinscripcionResponse](
+                data=response,
+                page=pag,
+                pages=totalPags
+            ),
+            "Datos obtenidos exitosamente"
+        )
+
+
+    def GetPreinscripcionesByPaciente(self, num_documento_paciente: int, pag: int, cantidad: int):
+        if num_documento_paciente <= 0:
+            return Response.error("Documento de paciente inválido")
+        
+        preinscripciones, totalElem = self.repoPreinscripciones.obtener_por_paciente(num_documento_paciente, pag, cantidad)
+        totalPags = math.ceil(totalElem / cantidad) if cantidad > 0 else 0
+        response = [self.MapModelToDTO(pre) for pre in preinscripciones]
+
+        return Response.ok(
+            PaginatedResponse[PreinscripcionResponse](
+                data=response,
+                page=pag,
+                pages=totalPags
+            ),
+            "Datos obtenidos exitosamente"
+        )
