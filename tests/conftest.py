@@ -9,6 +9,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import StaticPool
 from fastapi.testclient import TestClient
+from jose import jwt
 
 from main import app
 from models.Especialidad import Especialidad
@@ -247,3 +248,34 @@ def db_session():
 def client():
     return TestClient(app)
 
+TEST_JWT_SECRET = "dummy-secret"  # solo para tests locales
+TEST_JWT_ALG = "HS256"
+
+
+@pytest.fixture
+def client():
+    return TestClient(app)
+
+
+@pytest.fixture
+def paciente_token():
+    payload = {
+        "id_usuario": 44,
+        "num_documento": 1018442903,
+        "id_role": 3,
+        "role": "Paciente",
+    }
+    token = jwt.encode(payload, TEST_JWT_SECRET, algorithm=TEST_JWT_ALG)
+    return token
+
+
+@pytest.fixture
+def doctor_token():
+    payload = {
+        "id_usuario": 55,
+        "num_documento": 9999999999,
+        "id_role": 2,
+        "role": "Doctor",
+    }
+    token = jwt.encode(payload, TEST_JWT_SECRET, algorithm=TEST_JWT_ALG)
+    return token

@@ -1,4 +1,4 @@
-from sqlalchemy import Boolean, Column, ForeignKey, Integer
+from sqlalchemy import BigInteger, Boolean, Column, ForeignKey, Integer
 from sqlalchemy.orm import relationship
 
 from db.session import Base
@@ -6,7 +6,7 @@ from db.session import Base
 class Cita(Base):
     __tablename__ = 'citas'
     id_cita = Column(Integer, primary_key=True)
-    id_paciente = Column(Integer, nullable=False)
+    id_paciente = Column(BigInteger, nullable=False)
     id_remision = Column(Integer, nullable=False)
     id_agenda = Column(Integer, ForeignKey("agenda.id_agenda"), nullable=False)
     asistio = Column(Boolean, nullable=True)
