@@ -10,7 +10,7 @@ class PrescripcionesItems(Base):
     id_items = Column(Integer, primary_key=True, autoincrement=True)
     cantidad = Column(Integer, nullable=False)
     dosis = Column(VARCHAR(50), nullable=False)
-    duracion = Column(Integer, nullable=False)
+    duracion = Column(VARCHAR, nullable=False)
     id_prescripcion = Column(Integer, ForeignKey('prescripciones.id_prescripcion'), nullable=False)
     id_medicamento = Column(Integer, ForeignKey('medicamentos.codigo'), nullable=False)
 
