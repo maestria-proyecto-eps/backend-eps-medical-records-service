@@ -35,6 +35,21 @@ jobs:
           python-version: "3.12"
           cache: pip
       - run: pip install -r requirements.txt
+      - name: Create test .env
+        run: |
+          cat > .env << EOF
+          DB_OP_USER=dummy
+          DB_OP_PASSWORD=dummy
+          DB_OP_HOST=localhost
+          DB_OP_NAME=dummy
+          DB_ADMIN_USER=dummy
+          DB_ADMIN_PASSWORD=dummy
+          DB_ADMIN_HOST=localhost
+          DB_ADMIN_NAME=dummy
+          JWT_EXPIRES_MINUTES=30
+          JWT_SECRET=dummy-secret
+          JWT_ALGORITHM=HS256
+          EOF
       - name: Run tests
         run: |
           if [ -d "tests" ] && find tests -name "test_*.py" | grep -q .; then
