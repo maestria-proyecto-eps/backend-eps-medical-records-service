@@ -1,7 +1,5 @@
 ﻿import pytest
-from tests.conftest import TestingSessionLocal
 from models.Cita import Cita
-from datetime import date, timedelta, time
 from services.CitaService import CitatService
 from services.repositories.CitaRepository import CitaRepository
 from services.repositories.RegistroRepository import RegistroRepository
@@ -14,7 +12,6 @@ from services.repositories.RemisionesRepository import RemisionesRepository
 from services.repositories.EspecialidadRepository import EspecialidadRepository
 from services.repositories.PersonaRepository import PersonaRepository
 
-from models.Agenda import Agenda
 
 def test_get_consultation_context_cita_no_existe(client):
     response = client.get("/api/appoinment/99999/consultation-context")
