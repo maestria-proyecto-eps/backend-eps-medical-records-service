@@ -1,12 +1,4 @@
 import pytest
-from tests.conftest import TestingSessionLocal
-from models.Cita import Cita
-from datetime import date, timedelta, time
-from services.PreinscripcionesService import PreinscripcionesService
-from services.repositories.PrescripcionesRepository import PrescripcionesRepository
-from services.repositories.MedicamentoRepository import MedicamentoRepository
-from models.Agenda import Agenda
-from models.Medicamento import Medicamento
 
 
 def test_add_preinscripcion_exitoso(client, create_agenda_and_cita, create_medicamento):
