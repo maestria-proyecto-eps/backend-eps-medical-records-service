@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from fastapi.params import Depends
+from fastapi import Depends
 from starlette import status
 
 from dependencies import getCitaService
@@ -9,14 +9,15 @@ from schemas.response.AppointmentResponse import AppointmentResponse
 from schemas.response.RemisionResponse import RemisionResponse
 from schemas.response.GenericResponse import Response
 from services.CitaService import CitatService
-
+from core.dependencias import RequireRole
 
 router = APIRouter(
     prefix="/appoinment",
-    tags=["Appoinment"]
+    tags=["Appoinment"],
+    
 )
 
-@router.get("/{id}/consultation-context", response_model=Response[AppointmentResponse])
+@router.get("/{id}/consultation-context", response_model=Response[AppointmentResponse], dependencies=[Depends(RequireRole(["Médico"]))])
 def get_appoinment(id: int, service: CitatService = Depends(getCitaService)):
     model = service.getRegistroCitaById(id)
     if(model.hasError and model.message =="La cita no existe"):
@@ -25,7 +26,7 @@ def get_appoinment(id: int, service: CitatService = Depends(getCitaService)):
          return model.toHttpResponse(status.HTTP_409_CONFLICT)
     return model.toHttpResponse()
 
-@router.post("/{id}/consultation", response_model=Response[AppointmentResponse])
+@router.post("/{id}/consultation", response_model=Response[AppointmentResponse], dependencies=[Depends(RequireRole(["Médico"]))])
 def create_consultation(id: int, registro: RegistroHistoriaRequest, service: CitatService = Depends(getCitaService)):
     model = service.crear_registro_historia(registro, id)
     if(model.hasError ):
@@ -39,7 +40,7 @@ def create_consultation(id: int, registro: RegistroHistoriaRequest, service: Cit
               return model.toHttpResponse(status.HTTP_400_BAD_REQUEST)
     return model.toHttpResponse(status.HTTP_201_CREATED)
 
-@router.post("/{id}/remision", response_model=Response[RemisionResponse])
+@router.post("/{id}/remision", response_model=Response[RemisionResponse], dependencies=[Depends(RequireRole(["Médico"]))])
 def create_remision(id: int, remision: RemisionRequest, service: CitatService = Depends(getCitaService)):
     model = service.crear_remision(id, remision)
     if model.hasError:

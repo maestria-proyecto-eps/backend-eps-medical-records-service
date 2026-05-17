@@ -7,11 +7,12 @@ from dependencies import getMedicamentoService
 from schemas.response.MedicamentoResponse import MedicamentoResponse
 from schemas.response.GenericResponse import Response
 from services import MedicamentoService
-
+from core.dependencias import get_usuario_actual
 
 router = APIRouter(
     prefix="/medicamentos",
-    tags=["medicamentos"]
+    tags=["medicamentos"],
+    dependencies=[Depends(get_usuario_actual)]
 )
 
 

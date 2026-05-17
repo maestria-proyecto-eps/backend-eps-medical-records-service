@@ -7,11 +7,12 @@ from dependencies import getHistoriaService
 from schemas.response.HistoriaClinicaResponse import HistoriaClinicaResponse
 from schemas.response.GenericResponse import Response
 from services import HistoriaService
-
+from core.dependencias import RequireRole
 
 router = APIRouter(
     prefix="/pattient",
-    tags=["patient"]
+    tags=["patient"],
+    dependencies=[Depends(RequireRole(["Médico", "Paciente"]))]
 )
 
 @router.get("/{id}/medical-history", response_model=Response[List[HistoriaClinicaResponse]])

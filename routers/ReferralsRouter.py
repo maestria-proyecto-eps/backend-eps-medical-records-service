@@ -6,11 +6,13 @@ from dependencies import getCitaService
 from schemas.response.GenericResponse import Response
 from schemas.response.RemisionResponse import RemisionResponse
 from services.CitaService import CitatService
+from core.dependencias import RequireRole
 
 
 router = APIRouter(
     prefix="/referrals",
-    tags=["Referrals"]
+    tags=["Referrals"],
+    dependencies=[Depends(RequireRole(["Médico", "Paciente"]))]
 )
 
 
