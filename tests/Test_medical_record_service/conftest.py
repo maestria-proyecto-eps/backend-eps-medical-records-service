@@ -38,14 +38,24 @@ engine = create_engine(
     connect_args={"check_same_thread": False},
     poolclass=StaticPool,
 )
-TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+TestingSessionLocal = sessionmaker(
+    autocommit=False,
+    autoflush=False,
+    bind=engine,
+    expire_on_commit=False
+)
 
 engine_admin = create_engine(
     "sqlite://",
     connect_args={"check_same_thread": False},
     poolclass=StaticPool,
 )
-TestingSessionLocalAdmin = sessionmaker(autocommit=False, autoflush=False, bind=engine_admin)
+TestingSessionLocalAdmin = sessionmaker(
+    autocommit=False,
+    autoflush=False,
+    bind=engine_admin,
+    expire_on_commit=False
+)
 
 # ---------------------------------------------------------------------------
 # Overrides de BD
