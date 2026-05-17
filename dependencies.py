@@ -4,7 +4,7 @@ from fastapi import HTTPException, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from jose import JWTError, jwt
 
-from db.session import get_db, get_db_admin
+from db.session import get_db_audit, get_db_admin_audit
 from services.PreinscripcionesService import PreinscripcionesService
 from services.CatalogoDiagnosticoService import CatalogoDiagnosticoService
 from services.CitaService import CitatService
@@ -22,29 +22,29 @@ from services.repositories.RemisionesRepository import RemisionesRepository
 from services.repositories.PersonaRepository import PersonaRepository
 
 #Repositories
-def getCitaRepository(db = Depends(get_db))-> CitaRepository:
+def getCitaRepository(db = Depends(get_db_audit))-> CitaRepository:
     return CitaRepository(db)
-def getRegistroRepository(db = Depends(get_db))-> RegistroRepository:
+def getRegistroRepository(db = Depends(get_db_audit))-> RegistroRepository:
     return RegistroRepository(db)
-def getHistoriaRepository(db = Depends(get_db))-> HistoriaRepository:
+def getHistoriaRepository(db = Depends(get_db_audit))-> HistoriaRepository:
     return HistoriaRepository(db)
-def getDiagnosticoRepository(db = Depends(get_db))-> CatalogoDiagnosticoRepository:
+def getDiagnosticoRepository(db = Depends(get_db_audit))-> CatalogoDiagnosticoRepository:
     return CatalogoDiagnosticoRepository(db)
 
-def getMedicamentoRepository(db = Depends(get_db))-> MedicamentoRepository:
+def getMedicamentoRepository(db = Depends(get_db_audit))-> MedicamentoRepository:
     return MedicamentoRepository(db)
 
-def getPrescripcionesRepository(db = Depends(get_db))-> PrescripcionesRepository:
+def getPrescripcionesRepository(db = Depends(get_db_audit))-> PrescripcionesRepository:
     return PrescripcionesRepository(db)
 
-def getPrescripcionesItemsRepository(db = Depends(get_db))-> PrescripcionesItemsRepository:
+def getPrescripcionesItemsRepository(db = Depends(get_db_audit))-> PrescripcionesItemsRepository:
     return PrescripcionesItemsRepository(db)
-def getetEspecialidadRepository(db = Depends(get_db_admin))-> EspecialidadRepository:
+def getetEspecialidadRepository(db = Depends(get_db_admin_audit))-> EspecialidadRepository:
     return EspecialidadRepository(db)
-def getRemisionesRepository(db = Depends(get_db))-> RemisionesRepository:
+def getRemisionesRepository(db = Depends(get_db_audit))-> RemisionesRepository:
     return RemisionesRepository(db)
 
-def getUsuarioRepository(db = Depends(get_db_admin))-> PersonaRepository:
+def getUsuarioRepository(db = Depends(get_db_admin_audit))-> PersonaRepository:
     return PersonaRepository(db)
 
 #Services

@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, status, Query
 from sqlalchemy.orm import Session, joinedload
-from db.session import get_db
+from db.session import get_db_audit
 from models.AdminMed import AdminMed
 from models.AdminMedItems import AdminMedItems
 from models.PrescripcionesItems import PrescripcionesItems
@@ -10,13 +10,13 @@ from models.AtencionHospitalizacion import AtencionHospitalizacion
 from models.Medicamento import Medicamento
 from typing import Optional
 from datetime import datetime
-
-router = APIRouter(prefix="/api", tags=["Administracion medicamentos"])
+from core.dependencias import RequireRole
+router = APIRouter(prefix="/api", tags=["Administracion medicamentos"], dependencies=[Depends(RequireRole(["Enfermero"]))])
 
 @router.post("/administracion_medicamentos")
 def post_admin_med(
         info: AdministracionMedCreate,
-        db: Session = Depends(get_db)
+        db: Session = Depends(get_db_audit)
 ):
     try:
         new_admin = AdminMed(
@@ -69,7 +69,7 @@ def get_prescripciones_hospitalizacion(
         id_medicamento: int = Query(None),
         page: int = Query(1, ge=1),
         page_size: int = Query(10, ge=1, le=100),
-        db: Session = Depends(get_db)
+        db: Session = Depends(get_db_audit)
 ):
     try:
 
@@ -116,7 +116,7 @@ def get_admin_med_por_hospitalizacion(
         id_enfermera: Optional[int] = Query(None, description="Filtro opcional por ID de la enfermera"),
         fecha_inicio: Optional[datetime] = Query(None, description="Filtro inicio rango fecha_admin (YYYY-MM-DDTHH:MM:SS)"),
         fecha_fin: Optional[datetime] = Query(None, description="Filtro fin rango fecha_admin (YYYY-MM-DDTHH:MM:SS)"),
-        db: Session = Depends(get_db)
+        db: Session = Depends(get_db_audit)
 ):
     try:
 

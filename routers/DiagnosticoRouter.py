@@ -7,11 +7,12 @@ from dependencies import getDiagnosticoService
 from schemas.response.DiagnostcoResponse import DiagnosticoResponse
 from schemas.response.GenericResponse import Response
 from services import CatalogoDiagnosticoService
-
+from core.dependencias import get_usuario_actual
 
 router = APIRouter(
     prefix="/diagnosticos",
-    tags=["diagnosticos"]
+    tags=["diagnosticos"],
+    dependencies=[Depends(get_usuario_actual)]
 )
 
 @router.get("/search", response_model=Response[List[DiagnosticoResponse]])
