@@ -80,7 +80,7 @@ def get_prescripciones_hospitalizacion(
             PrescripcionesItems.id_prescripcion == Prescripciones.id_prescripcion
         ).join(
             AtencionHospitalizacion,
-            Prescripciones.id_atencion == AtencionHospitalizacion.id_atencion
+            Prescripciones.id_atencion == AtencionHospitalizacion.id_atencionh
         ).filter(
             AtencionHospitalizacion.id_hospitalizacion == id_hospitalizacion,
             Prescripciones.tipo == 3
