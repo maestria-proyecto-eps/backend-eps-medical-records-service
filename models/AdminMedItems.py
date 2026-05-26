@@ -3,7 +3,7 @@ from db.session import Base
 
 
 class AdminMedItems(Base):
-    __tablename__ = "ADMINISTRACIONMED_ITEMS"
+    __tablename__ = "administracion_med_items"
 
     id_admin_items = Column(Integer, primary_key=True)
     id_prescripcion_items =  Column(Integer)
