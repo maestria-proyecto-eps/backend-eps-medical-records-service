@@ -11,7 +11,7 @@ from models.Medicamento import Medicamento
 from typing import Optional
 from datetime import datetime
 from core.dependencias import RequireRole
-router = APIRouter(prefix="/api", tags=["Administracion medicamentos"], dependencies=[Depends(RequireRole(["Enfermero"]))])
+router = APIRouter(tags=["Administracion medicamentos"], dependencies=[Depends(RequireRole(["Enfermero"]))])
 
 @router.post("/administracion_medicamentos")
 def post_admin_med(
@@ -26,7 +26,8 @@ def post_admin_med(
         db.add(new_admin)
 
         db.flush()
-
+        
+        detalles = []
         for item_id in info.admin_med_items:
             item_prescripcion = db.query(PrescripcionesItems).join(
                 Prescripciones,
@@ -41,10 +42,13 @@ def post_admin_med(
 
             nuevo_detalle = AdminMedItems(
                 id_admin_med=new_admin.id_admin_med,
-                id_items=item_id,
-                id_prescripcion_items=item_prescripcion.id_items
+                id_prescripcion_item=item_prescripcion.id_items
             )
             db.add(nuevo_detalle)
+            detalles.append({
+                "id_admin_med": nuevo_detalle.id_admin_med,
+                "id_prescripcion_item": nuevo_detalle.id_prescripcion_item
+            })
 
 
         db.commit()
@@ -53,7 +57,7 @@ def post_admin_med(
         return {
             "hasError": False,
             "Message": "tabla exitoso",
-            "Data": {"admin_med": new_admin,"admin_med_items": nuevo_detalle}
+            "Data": {"admin_med": new_admin, "admin_med_items": detalles}
     }
 
     except Exception as e:
@@ -125,7 +129,7 @@ def get_admin_med_por_hospitalizacion(
         ).join(
             AdminMedItems, AdminMed.id_admin_med == AdminMedItems.id_admin_med
         ).join(
-            PrescripcionesItems, AdminMedItems.id_items == PrescripcionesItems.id_items
+            PrescripcionesItems, AdminMedItems.id_prescripcion_item == PrescripcionesItems.id_items
         ).join(
             Medicamento, PrescripcionesItems.id_medicamento == Medicamento.codigo
         ).filter(

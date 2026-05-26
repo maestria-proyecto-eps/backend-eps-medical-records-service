@@ -56,7 +56,7 @@ def root():
     return {
         "message": "ok"
     }
-app.include_router(AdminMedicamentos.router)
+app.include_router(AdminMedicamentos.router, prefix="/api")
 
 app.include_router(AppoinmentRouter.router, prefix="/api")
 app.include_router(PattienRouter.router, prefix="/api")
