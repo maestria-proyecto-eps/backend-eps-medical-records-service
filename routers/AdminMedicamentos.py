@@ -46,7 +46,6 @@ def post_admin_med(
             )
             db.add(nuevo_detalle)
             detalles.append({
-                "id_admin_items": nuevo_detalle.id_admin_items,
                 "id_admin_med": nuevo_detalle.id_admin_med,
                 "id_prescripcion_item": nuevo_detalle.id_prescripcion_item
             })
